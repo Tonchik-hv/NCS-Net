@@ -1,0 +1,7 @@
+type_ext_field: 'plane_wave' # plane_wave | gauss_beam | plane_wave_bconst | plane_wave_exp
+a0: 0.8
+lambda_L: 1.0 #мкм
+T: 157.08 #в фаз. ед.
+t0: 0 #в фаз. ед.
+eta: 1
+n: 2

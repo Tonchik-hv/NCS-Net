@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Артефакты обучения и данные
+*.pth
+*.pkl
+compton_dataset_cache_*/
+val_2d_metrics_maps/
+
+# Графики и временные файлы
+*.png
+.ipynb_checkpoints/
+_extracted/
+.cursor/
+
+# Вложенные git-репозитории (не часть NCS-Net)
+NLTS/
+archive/
+snlcs/src/
+snlcs/.git/
+snlcs/Spectrum_of_nonlinear_Compton_scattering/
+snlcs/scripts/
+snlcs/*.md
+snlcs/*.yml
+snlcs/pyproject.toml
+snlcs/.gitignore
+snlcs/CONTRIBUTING.md
+
+# Локальные исходники в корне (есть адаптированные копии в scripts/)
+/predict_spectrum_from_params.py
+/predict_beam_spectrum_corrected.py
+/benchmark_beam_spectrum_cpu.py
+/NN_for_averaging_full_param_angles_pi_2_inference_time.py
+/NN_for_averaging_full_param_angles_pi_2_inference_time (Copy).py
+
+# Прочее
+*.pdf
+test.ipynb
+workspace.ipynb
+averaging_origin.ipynb
+ЭЗ*.pdf

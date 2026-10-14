@@ -1,0 +1,51 @@
+lambda_L: 1.0 #мкм
+
+xf: 0 #мкм
+yf: 0 #мкм
+zf: 0 #мкм
+
+t0: 0
+z0: 100 # мкм
+
+sigma_x: 10 #мкм
+sigma_y: 10 #мкм
+
+emittance_n_x: 1 #мм*мрад
+emittance_n_y: 1 #мм*мрад
+emittance_n_z: 0 #кэВ*мм #МэВ*мкм
+
+mu_px: 0 
+mu_py: 0
+
+energy: 51.1 #МэВ 
+sigma_energy: 5.0 #МэВ 
+
+charge: 1.0e-9 #Кл
+n_particles: 10000
+
+
+# lambda_L: 1.0 #мкм
+
+# xf: 0 #мкм
+# yf: 0 #мкм
+# zf: 0 #мкм
+
+# t0: 0
+# z0: 0 # мкм
+
+# sigma_x: 0 #мкм
+# sigma_y: 0 #мкм
+
+# emittance_n_x: 0 #мм*мрад
+# emittance_n_y: 0 #мм*мрад
+# emittance_n_z: 0 #кэВ*мм #МэВ*мкм
+
+# mu_px: 0 
+# mu_py: 0
+
+# energy: 51.1 #МэВ 
+# sigma_energy: 0 #МэВ 
+
+# charge: 1.0e-9 #Кл
+# n_particles: 1
+

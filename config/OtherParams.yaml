@@ -1,0 +1,20 @@
+solver_method: 'Boris'
+spec_calc_method: 'squad_interp'
+
+points_per_lambda: 20
+
+freq_i: 0.001
+freq_f: 2.0
+freq_N: 100
+
+theta_i: 0.46
+theta_f: 0.46
+theta_N: 1
+
+phi_i: 0
+phi_f: 1
+phi_N: 1
+
+numba_threads: 1
+
+random_seed: 42
