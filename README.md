@@ -1,104 +1,104 @@
 # NCS-Net
 
-Нейросеть **NCS-Net** для прямой генерации усреднённых спектров нелинейного комптоновского рассеяния по параметрам `(a₀, τ, θ)`. Репозиторий содержит код обучения, оценки, визуализации и инференса для произвольных параметров и для пучка электронов.
+**NCS-Net** is a neural network for direct generation of averaged nonlinear Compton scattering spectra from parameters `(a₀, τ, θ)`. This repository contains training, evaluation, visualization, and inference code for arbitrary parameters and for an electron beam.
 
-Исходный монолитный скрипт `NN_for_averaging_full_param_angles_pi_2_inference_time.py` сохранён без изменений; для работы из репозитория используйте модульную структуру ниже.
+The original monolithic script `NN_for_averaging_full_param_angles_pi_2_inference_time.py` is kept unchanged; for day-to-day use from this repository, prefer the modular layout below.
 
-## Структура репозитория
+## Repository layout
 
 ```
 .
-├── train.py                          # обучение NCS-Net (главная точка входа)
-├── physrev.mplstyle                  # стиль графиков matplotlib
+├── train.py                          # NCS-Net training (main entry point)
+├── physrev.mplstyle                  # matplotlib plot style
 │
-├── compton_averaging/                # Python-пакет
-│   ├── config.py                     # гиперпараметры и пути к артефактам
-│   ├── dataset.py                    # генерация/загрузка датасета
-│   ├── model.py                      # архитектура NCS-Net (класс DirectComptonModel)
-│   ├── normalizer.py                 # нормализация параметров и спектров
-│   ├── loss.py                       # физический лосс
-│   ├── training.py                   # цикл обучения и валидации
-│   ├── physics.py                    # инициализация snlcs-калькулятора
-│   ├── plotting.py                   # утилиты оформления графиков
-│   ├── io.py                         # загрузка NCS-Net, нормализатора, val-выборки
-│   └── viz_2d_theta_maps.py          # 2D-карты I(θ, ω) и метрики
+├── compton_averaging/                # Python package
+│   ├── config.py                     # hyperparameters and artifact paths
+│   ├── dataset.py                    # dataset generation / loading
+│   ├── model.py                      # NCS-Net architecture (DirectComptonModel)
+│   ├── normalizer.py                 # parameter and spectrum normalization
+│   ├── loss.py                       # physics-informed loss
+│   ├── training.py                   # training and validation loop
+│   ├── physics.py                    # snlcs calculator initialization
+│   ├── plotting.py                   # plotting utilities
+│   ├── io.py                         # load NCS-Net, normalizer, val split
+│   └── viz_2d_theta_maps.py          # 2D maps I(θ, ω) and metrics
 │
-├── scripts/                          # самостоятельные скрипты
-│   ├── evaluate_val_dataset.py       # метрики на валидационном датасете
-│   ├── benchmark_cpu_inference.py    # замер времени инференса 1D на CPU
-│   ├── visualize_2d_theta_maps.py    # 2D-карты и 2D-метрики
-│   ├── visualize_random_predictions.py  # N случайных 1D-графиков
-│   ├── predict_spectrum_from_params.py  # инференс для одной тройки (a₀, τ, θ)
-│   ├── predict_beam_spectrum_corrected.py  # 2D-спектр пучка (NCS-Net / аналитика / quad)
-│   └── benchmark_beam_spectrum_cpu.py  # бенчмарк 2D-спектра пучка на CPU
+├── scripts/                          # standalone scripts
+│   ├── evaluate_val_dataset.py       # metrics on the validation set
+│   ├── benchmark_cpu_inference.py    # 1D inference timing on CPU
+│   ├── visualize_2d_theta_maps.py    # 2D maps and 2D metrics
+│   ├── visualize_random_predictions.py  # N random 1D plots
+│   ├── predict_spectrum_from_params.py  # inference for one (a₀, τ, θ) triple
+│   ├── predict_beam_spectrum_corrected.py  # 2D beam spectrum (NCS-Net / analytic / quad)
+│   └── benchmark_beam_spectrum_cpu.py  # 2D beam spectrum CPU benchmark
 │
 ├── src/
-│   └── calc_spectrum.py              # аналитика и численный расчёт 1D-спектров
+│   └── calc_spectrum.py              # analytic and numerical 1D spectra
 │
 └── config/
-    ├── ExtFieldsParams.yaml      # параметры лазерного поля
-    ├── eBeamParams.yaml          # параметры электронного пучка
-    └── OtherParams.yaml          # прочие параметры snlcs
+    ├── ExtFieldsParams.yaml      # laser field parameters
+    ├── eBeamParams.yaml          # electron beam parameters
+    └── OtherParams.yaml          # other snlcs parameters
 ```
 
-Корневые файлы `predict_spectrum_from_params.py`, `predict_beam_spectrum_corrected.py`, `benchmark_beam_spectrum_cpu.py` — **исходники**, оставлены без изменений. Для публикации и запуска из репозитория используйте их копии в `scripts/`.
+Root-level `predict_spectrum_from_params.py`, `predict_beam_spectrum_corrected.py`, and `benchmark_beam_spectrum_cpu.py` are **legacy sources** kept as-is. For publication and runs from this repo, use the copies under `scripts/`.
 
-## Установка
+## Installation
 
 ```bash
-# из корня репозитория
+# from the repository root
 pip install torch numpy scipy matplotlib pyyaml
 
-# библиотека snlcs (нужна для quad_interp и части визуализаций)
+# snlcs library (required for quad_interp and some visualizations)
 pip install -e snlcs/
 ```
 
-Все команды ниже запускаются **из корня репозитория**.
+All commands below are run **from the repository root**.
 
-## Подготовка: обучение NCS-Net
+## Preparation: training NCS-Net
 
-Перед оценкой и инференсом нужны обученная NCS-Net и нормализатор. При первом запуске также генерируется (или загружается из кеша) датасет.
+Before evaluation and inference you need a trained NCS-Net and a normalizer. On the first run, the dataset is also generated (or loaded from cache).
 
 ```bash
 python train.py
 ```
 
-Скрипт:
-- создаёт/загружает кеш датасета в `compton_dataset_cache_angles_pi_2_ns800000_ts2500_seed42/`;
-- формирует stratified train/val и сохраняет индексы в `val_indices_angles_pi_2_ns800000_ts2500.pkl`;
-- обучает нормализатор → `normalizer_angles_pi_2_ns800000_ts2500.pkl`;
-- обучает NCS-Net (если файл ещё не существует) → `model_with_averaging_angles_pi_2_ns800000_ts2500.pth`.
+The script:
+- creates/loads the dataset cache in `compton_dataset_cache_angles_pi_2_ns800000_ts2500_seed42/`;
+- builds a stratified train/val split and saves indices to `val_indices_angles_pi_2_ns800000_ts2500.pkl`;
+- trains the normalizer → `normalizer_angles_pi_2_ns800000_ts2500.pkl`;
+- trains NCS-Net (if the checkpoint does not exist yet) → `model_with_averaging_angles_pi_2_ns800000_ts2500.pth`.
 
-Если NCS-Net уже обучена, `train.py` только загружает веса и не переобучает.
+If NCS-Net is already trained, `train.py` only loads the weights and does not retrain.
 
 ---
 
-## Скрипты: что делает и как запускать
+## Scripts: purpose and usage
 
-### Обучение
+### Training
 
-| Файл | Назначение | Запуск |
-|------|-----------|--------|
-| `train.py` | Генерация датасета, обучение нормализатора и NCS-Net, сохранение весов | `python train.py` |
+| File | Purpose | Run |
+|------|---------|-----|
+| `train.py` | Dataset generation, normalizer and NCS-Net training, saving weights | `python train.py` |
 
-### Оценка обученной NCS-Net (валидационный датасет)
+### Evaluating the trained NCS-Net (validation set)
 
-Требуют: `model_with_averaging_angles_pi_2_ns800000_ts2500.pth`, `normalizer_angles_pi_2_ns800000_ts2500.pkl`, кеш датасета.
+Requires: `model_with_averaging_angles_pi_2_ns800000_ts2500.pth`, `normalizer_angles_pi_2_ns800000_ts2500.pkl`, and the dataset cache.
 
-| Файл | Назначение | Запуск |
-|------|-----------|--------|
-| `scripts/evaluate_val_dataset.py` | MSE/MAE в log-масштабе, ошибка по площади, время инференса на GPU/CPU | `python scripts/evaluate_val_dataset.py` |
-| `scripts/benchmark_cpu_inference.py` | Среднее время одного forward-pass на CPU | `python scripts/benchmark_cpu_inference.py` |
-| `scripts/visualize_2d_theta_maps.py` | 2D-карты I(θ, ω): предсказание, аналитика, Lab-frame; 2D-метрики по val | `python scripts/visualize_2d_theta_maps.py` |
-| `scripts/visualize_random_predictions.py` | N случайных 1D-графиков True vs Predicted vs snlcs | `python scripts/visualize_random_predictions.py` |
+| File | Purpose | Run |
+|------|---------|-----|
+| `scripts/evaluate_val_dataset.py` | MSE/MAE in log scale, area error, GPU/CPU inference time | `python scripts/evaluate_val_dataset.py` |
+| `scripts/benchmark_cpu_inference.py` | Average time of one forward pass on CPU | `python scripts/benchmark_cpu_inference.py` |
+| `scripts/visualize_2d_theta_maps.py` | 2D maps I(θ, ω): prediction, analytic, Lab frame; 2D val metrics | `python scripts/visualize_2d_theta_maps.py` |
+| `scripts/visualize_random_predictions.py` | N random 1D plots: True vs Predicted vs snlcs | `python scripts/visualize_random_predictions.py` |
 
-### Инференс для произвольных параметров
+### Inference for arbitrary parameters
 
-| Файл | Назначение | Запуск |
-|------|-----------|--------|
-| `scripts/predict_spectrum_from_params.py` | Предсказание 1D-спектра по `(a₀, τ, θ)` с графиком True vs Predicted | `python scripts/predict_spectrum_from_params.py --a0 0.8 --tau 50 --theta 2.5` |
+| File | Purpose | Run |
+|------|---------|-----|
+| `scripts/predict_spectrum_from_params.py` | Predict a 1D spectrum for `(a₀, τ, θ)` with True vs Predicted plot | `python scripts/predict_spectrum_from_params.py --a0 0.8 --tau 50 --theta 2.5` |
 
-Полезные опции:
+Useful options:
 
 ```bash
 python scripts/predict_spectrum_from_params.py --a0 1.0 --tau 40 --theta 3.0 -o output.png
@@ -106,91 +106,91 @@ python scripts/predict_spectrum_from_params.py --a0 0.5 --tau 30 --theta 2.8 --s
 python scripts/predict_spectrum_from_params.py --help
 ```
 
-Параметры:
-- `--a0` — амплитуда поля;
-- `--tau` — длительность импульса в единицах π (`dur = tau * π`);
-- `--theta` — угол в радианах (диапазон обучения: π/2 … π);
-- `--model`, `--normalizer` — пути к весам (по умолчанию из `compton_averaging/config.py`);
-- `--output` / `-o` — путь к PNG;
-- `--skip-snlcs` — не вызывать snlcs (быстрее, если пакет недоступен).
+Parameters:
+- `--a0` — field amplitude;
+- `--tau` — pulse duration in units of π (`dur = tau * π`);
+- `--theta` — angle in radians (training range: π/2 … π);
+- `--model`, `--normalizer` — paths to weights (defaults from `compton_averaging/config.py`);
+- `--output` / `-o` — path to PNG;
+- `--skip-snlcs` — do not call snlcs (faster if the package is unavailable).
 
-### Инференс для электронного пучка
+### Inference for an electron beam
 
-Используют конфиги `config/ExtFieldsParams.yaml` и `config/eBeamParams.yaml`.
+Uses `config/ExtFieldsParams.yaml` and `config/eBeamParams.yaml`.
 
-| Файл | Назначение | Запуск |
-|------|-----------|--------|
-| `scripts/predict_beam_spectrum_corrected.py` | Три 2D-карты спектра пучка: NCS-Net (с преобразованием Лоренца), аналитика D2ECalculator_angles, quad_interp snlcs; метрики интеграла | `python scripts/predict_beam_spectrum_corrected.py` |
-| `scripts/benchmark_beam_spectrum_cpu.py` | Бенчмарк CPU: NCS-Net vs D2ECalculator_angles для 2D-спектра пучка (без построения графиков) | `python scripts/benchmark_beam_spectrum_cpu.py` |
+| File | Purpose | Run |
+|------|---------|-----|
+| `scripts/predict_beam_spectrum_corrected.py` | Three 2D beam spectrum maps: NCS-Net (with Lorentz transform), D2ECalculator_angles analytic, snlcs quad_interp; integral metrics | `python scripts/predict_beam_spectrum_corrected.py` |
+| `scripts/benchmark_beam_spectrum_cpu.py` | CPU benchmark: NCS-Net vs D2ECalculator_angles for 2D beam spectrum (no plots) | `python scripts/benchmark_beam_spectrum_cpu.py` |
 
-Выходные PNG (для `predict_beam_spectrum_corrected.py`):
-- `predicted_beam_spectrum_map.png` — NCS-Net + преобразование Лоренца
-- `analytical_beam_spectrum_map.png` — аналитика D2ECalculator_angles
-- `analytical_beam_spectrum_theta_frequency_map_lab.png` — quad_interp snlcs (третья карта)
+Output PNGs (`predict_beam_spectrum_corrected.py`):
+- `predicted_beam_spectrum_map.png` — NCS-Net + Lorentz transform
+- `analytical_beam_spectrum_map.png` — D2ECalculator_angles analytic
+- `analytical_beam_spectrum_theta_frequency_map_lab.png` — snlcs quad_interp (third map)
 
 ---
 
-## Зависимости между модулями
+## Module dependencies
 
 ```
 src/calc_spectrum.py
-  └── используется в: dataset, viz_2d, predict_spectrum_from_params, predict_beam_spectrum_corrected
+  └── used in: dataset, viz_2d, predict_spectrum_from_params, predict_beam_spectrum_corrected
 
 config/*.yaml
-  └── используется в: physics.py, predict_beam_spectrum_corrected, benchmark_beam_spectrum_cpu, visualize_random_predictions
+  └── used in: physics.py, predict_beam_spectrum_corrected, benchmark_beam_spectrum_cpu, visualize_random_predictions
 
 snlcs (pip install -e snlcs/)
-  └── нужен для: quad_interp-спектров, init_spectrum_sqinrp, predict_beam_spectrum_corrected
+  └── required for: quad_interp spectra, init_spectrum_sqinrp, predict_beam_spectrum_corrected
 ```
 
-## Конфигурационные файлы snlcs
+## snlcs configuration files
 
-| Файл | Содержимое |
-|------|-----------|
-| `config/ExtFieldsParams.yaml` | Тип поля, `a₀`, длина волны, длительность импульса `T` |
-| `config/eBeamParams.yaml` | Параметры гауссова пучка: энергия, размеры, число частиц |
-| `config/OtherParams.yaml` | Метод интегрирования, сетка частот/углов, `random_seed` |
+| File | Contents |
+|------|----------|
+| `config/ExtFieldsParams.yaml` | Field type, `a₀`, wavelength, pulse duration `T` |
+| `config/eBeamParams.yaml` | Gaussian beam: energy, sizes, number of particles |
+| `config/OtherParams.yaml` | Integration method, frequency/angle grid, `random_seed` |
 
-Перед запуском скриптов для пучка при необходимости отредактируйте `a₀`, `T` и параметры пучка в этих YAML-файлах.
+Before running beam scripts, edit `a₀`, `T`, and beam parameters in these YAML files if needed.
 
-## Артефакты (создаются при работе)
+## Artifacts (created at runtime)
 
-| Файл / каталог | Описание |
-|----------------|----------|
-| `model_with_averaging_angles_pi_2_ns800000_ts2500.pth` | Веса обученной NCS-Net |
-| `normalizer_angles_pi_2_ns800000_ts2500.pkl` | Параметры нормализации |
-| `val_indices_angles_pi_2_ns800000_ts2500.pkl` | Индексы валидационной выборки |
-| `compton_dataset_cache_angles_pi_2_ns.../` | Кеш сгенерированного датасета |
-| `training_history_with_averaging.png` | Кривые train/val loss |
-| `val_2d_metrics_maps/` | Случайные 2D-карты из валидационных метрик |
-| `averaged_prediction_result_angles_pi_2_*.png` | Случайные 1D-графики из визуализации |
-| `predicted_spectrum_theta_frequency_map*.png` | 2D-карты из `visualize_2d_theta_maps.py` |
+| File / directory | Description |
+|------------------|-------------|
+| `model_with_averaging_angles_pi_2_ns800000_ts2500.pth` | Trained NCS-Net weights |
+| `normalizer_angles_pi_2_ns800000_ts2500.pkl` | Normalization parameters |
+| `val_indices_angles_pi_2_ns800000_ts2500.pkl` | Validation split indices |
+| `compton_dataset_cache_angles_pi_2_ns.../` | Generated dataset cache |
+| `training_history_with_averaging.png` | Train/val loss curves |
+| `val_2d_metrics_maps/` | Random 2D maps from validation metrics |
+| `averaged_prediction_result_angles_pi_2_*.png` | Random 1D plots from visualization |
+| `predicted_spectrum_theta_frequency_map*.png` | 2D maps from `visualize_2d_theta_maps.py` |
 
-## Типичный порядок работы
+## Typical workflow
 
 ```bash
-# 1. Установка зависимостей
+# 1. Install dependencies
 pip install torch numpy scipy matplotlib pyyaml
 pip install -e snlcs/
 
-# 2. Обучение (или загрузка готовых весов)
+# 2. Train (or load existing weights)
 python train.py
 
-# 3. Оценка на валидации
+# 3. Validation evaluation
 python scripts/evaluate_val_dataset.py
 python scripts/visualize_random_predictions.py
 
-# 4. Инференс для конкретных параметров
+# 4. Inference for specific parameters
 python scripts/predict_spectrum_from_params.py --a0 0.8 --tau 50 --theta 2.8
 
-# 5. Спектр пучка (после настройки config/*.yaml)
+# 5. Beam spectrum (after tuning config/*.yaml)
 python scripts/predict_beam_spectrum_corrected.py
 python scripts/benchmark_beam_spectrum_cpu.py
 ```
 
-## Пакет `compton_averaging`
+## `compton_averaging` package
 
-Основные импорты для собственных скриптов (класс `DirectComptonModel` — реализация NCS-Net):
+Common imports for your own scripts (`DirectComptonModel` is the NCS-Net implementation):
 
 ```python
 from compton_averaging import DirectComptonModel, ComptonDataset, train_model  # DirectComptonModel = NCS-Net
