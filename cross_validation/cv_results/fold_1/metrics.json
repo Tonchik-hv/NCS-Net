@@ -1,0 +1,22 @@
+{
+  "mse_log_mean": 0.004026706330478191,
+  "mse_log_std": 0.05960630252957344,
+  "mae_log_mean": 0.017214903607964516,
+  "mae_log_std": 0.04631439223885536,
+  "area_rel_error_pct_mean": 2.102506637573242,
+  "area_rel_error_pct_std": 4.104669570922852,
+  "n_val_samples": 160024,
+  "fold": 1,
+  "n_train": 639976,
+  "n_val": 160024,
+  "epochs": 300,
+  "lr": 0.001,
+  "batch_size": 128,
+  "best_val_loss": 0.0022100584668701133,
+  "final_val_loss": 0.0022760407999355653,
+  "final_train_loss": 0.0024943063093494857,
+  "best_checkpoint_epoch": 285,
+  "train_wall_seconds": 15937.06215503902,
+  "normalizer_fit_seconds": 12.529825214965967,
+  "device": "cuda"
+}

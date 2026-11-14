@@ -17,7 +17,7 @@ from compton_averaging.config import (
 )
 from compton_averaging.dataset import ComptonDataset, make_stratified_train_val_subsets
 from compton_averaging.model import DirectComptonModel
-from compton_averaging.normalizer import DataNormalizer
+from compton_averaging.normalizer import DataNormalizer, load_normalizer_from_pickle
 
 
 def get_device() -> torch.device:
@@ -81,8 +81,7 @@ def load_normalizer(
 
     if os.path.exists(norm_path):
         print(f"Загрузка нормализатора из {norm_path}...")
-        with open(norm_path, 'rb') as f:
-            normalizer = pickle.load(f)
+        normalizer = load_normalizer_from_pickle(norm_path)
         normalizer.to(device)
         return normalizer
 

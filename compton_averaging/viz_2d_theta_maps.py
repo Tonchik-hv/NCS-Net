@@ -23,6 +23,9 @@ from compton_averaging.model import DirectComptonModel
 from compton_averaging.normalizer import DataNormalizer
 from compton_averaging.physics import init_spectrum_sqinrp
 from compton_averaging.plotting import (
+    THETA_C,
+    ZOOM_BOX_COLOR,
+    add_collimation_angle_integrated_spectrum_inset,
     save_val_2d_spectrum_map_png,
     style_colorbar,
     style_spectrum_2d_map_axes,
@@ -30,7 +33,7 @@ from compton_averaging.plotting import (
 from src.calc_spectrum import D2ECalculator_angles
 
 
-def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
+def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None, zoom_box=True):
     root = base_dir or BASE_DIR
     VAL_2D_METRICS_MAPS_DIR = val_2d_metrics_maps_dir(root)
 
@@ -168,13 +171,13 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
         zmax_pred_lab = float(np.nanmax(intensity_map_lab))
         mesh_lab = plt.pcolormesh(chi_lab, y_pos_lab, intensity_map_lab, shading="gouraud", cmap="viridis", vmin=0.0, vmax=zmax_pred_lab)
     
-        plt.xlabel(r"$y_{\text{lab}}$", fontsize=vis_label_fs)
-        plt.ylabel(r"$\gamma_0(\pi - \theta_{\text{lab}})$", fontsize=vis_label_fs)
+        plt.xlabel(r"$y_{\mathrm{lab}}$", fontsize=vis_label_fs)
+        plt.ylabel(r"$\gamma_0(\pi - \theta_{\mathrm{lab}})$", fontsize=vis_label_fs)
     
         cbar_lab = plt.colorbar(mesh_lab, extend="neither")
         style_colorbar(
             cbar_lab,
-            r"Predicted $\frac{d^2N}{d\omega_{\text{lab}} d\Omega_{\text{lab}}}$ Envelope",
+            r"Predicted $\frac{d^2N}{d\omega_{\mathrm{lab}} d\Omega_{\mathrm{lab}}}$ Envelope",
             zmax_pred_lab,
             tick_fs=vis_tick_fs,
             label_fs=vis_cbar_label_fs,
@@ -191,15 +194,18 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
         ax2d_lab.set_ylim(0, np.nanmax(y_pos_lab))
         plt.xlim(0.01, 1.5)
         # plt.title(rf"Predicted Compton Spectrum in Lab Frame ($\gamma_0 = {gamma0}$)", fontsize=PLOT_LABEL_FS, pad=15)
-    
-        ax2d_lab.axhline(0.07, color="red", linestyle="--", linewidth=1, alpha=0.95, zorder=10)
+
+        y_collimation = gamma0 * THETA_C
+        ax2d_lab.axhline(
+            y_collimation, color=ZOOM_BOX_COLOR, linestyle="--", linewidth=1, alpha=0.95, zorder=10
+        )
         ax2d_lab.annotate(
-            r"$\theta_c=0.0007$",
-            xy=(0.6, 0.07),
+            rf"$\theta_c={THETA_C}$",
+            xy=(0.6, y_collimation),
             xytext=(-8, 6),
             textcoords="offset points",
             fontsize=vis_tick_fs,
-            color="red",
+            color=ZOOM_BOX_COLOR,
             ha="right",
             va="bottom",
             zorder=11,
@@ -216,7 +222,22 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
             bbox={"facecolor": "white", "alpha": 0.9, "edgecolor": "black", "pad": 6},
             clip_on=False,
         )
-    
+
+        if zoom_box:
+            zx0, zx1, _, _ = add_collimation_angle_integrated_spectrum_inset(
+                ax2d_lab,
+                chi_lab,
+                y_pos_lab,
+                intensity_map_lab,
+                gamma0,
+                THETA_C,
+                vis_tick_fs,
+            )
+            print(
+                f"Inset integrated spectrum (lab): x=[{zx0:.4f}, {zx1:.4f}] "
+                f"(theta_c={THETA_C}, strip y in [0, γ·θ_c])"
+            )
+
         plt.subplots_adjust(right=0.82, bottom=0.12)
         out_file_2d_lab = "predicted_spectrum_theta_frequency_map_lab.png"
         plt.savefig(out_file_2d_lab, bbox_inches="tight", pad_inches=0.2)
@@ -673,13 +694,13 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
         zmax_an_lab = float(np.nanmax(d2N_an_lab))
         mesh_an_lab = plt.pcolormesh(chi_lab, y_pos_lab, d2N_an_lab, shading="gouraud", cmap="viridis", vmin=0.0, vmax=zmax_an_lab)
     
-        plt.xlabel(r"$y_{\text{lab}}$", fontsize=vis_label_fs)
-        plt.ylabel(r"$\gamma_0(\pi - \theta_{\text{lab}})$", fontsize=vis_label_fs)
+        plt.xlabel(r"$y_{\mathrm{lab}}$", fontsize=vis_label_fs)
+        plt.ylabel(r"$\gamma_0(\pi - \theta_{\mathrm{lab}})$", fontsize=vis_label_fs)
     
         cbar_an_lab = plt.colorbar(mesh_an_lab, extend="neither")
         style_colorbar(
             cbar_an_lab,
-            r"Analytical $\frac{d^2N}{d\omega_{\text{lab}} d\Omega_{\text{lab}}}$ Envelope",
+            r"Analytical $\frac{d^2N}{d\omega_{\mathrm{lab}} d\Omega_{\mathrm{lab}}}$ Envelope",
             zmax_an_lab,
             tick_fs=vis_tick_fs,
             label_fs=vis_cbar_label_fs,
@@ -696,15 +717,18 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
         ax2d_an_lab.set_ylim(0, np.nanmax(y_pos_lab))
         plt.xlim(0.01, 1.5)
         # plt.title(rf"Analytical Compton Spectrum in Lab Frame ($\gamma_0 = {gamma0}$)", fontsize=PLOT_LABEL_FS, pad=15)
-    
-        ax2d_an_lab.axhline(0.07, color="red", linestyle="--", linewidth=1, alpha=0.95, zorder=10)
+
+        y_collimation = gamma0 * THETA_C
+        ax2d_an_lab.axhline(
+            y_collimation, color=ZOOM_BOX_COLOR, linestyle="--", linewidth=1, alpha=0.95, zorder=10
+        )
         ax2d_an_lab.annotate(
-            r"$\theta_c=0.0007$",
-            xy=(0.6, 0.07),
+            rf"$\theta_c={THETA_C}$",
+            xy=(0.6, y_collimation),
             xytext=(-8, 6),
             textcoords="offset points",
             fontsize=vis_tick_fs,
-            color="red",
+            color=ZOOM_BOX_COLOR,
             ha="right",
             va="bottom",
             zorder=11,
@@ -721,6 +745,21 @@ def run_2d_theta_maps(device, model, normalizer, val_data, base_dir=None):
             bbox={"facecolor": "white", "alpha": 0.9, "edgecolor": "black", "pad": 6},
             clip_on=False,
         )
+
+        if zoom_box:
+            zx0, zx1, _, _ = add_collimation_angle_integrated_spectrum_inset(
+                ax2d_an_lab,
+                chi_lab,
+                y_pos_lab,
+                d2N_an_lab,
+                gamma0,
+                THETA_C,
+                vis_tick_fs,
+            )
+            print(
+                f"Inset integrated spectrum (analytical lab): x=[{zx0:.4f}, {zx1:.4f}] "
+                f"(theta_c={THETA_C}, strip y in [0, γ·θ_c])"
+            )
     
         plt.subplots_adjust(right=0.82, bottom=0.12)
         out_file_2d_an_lab = "analytical_spectrum_theta_frequency_map_lab.png"

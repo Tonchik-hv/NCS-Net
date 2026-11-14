@@ -1,0 +1,194 @@
+Загрузка датасета из кеша (один файл): /home/tycha-0101/Documents/NN/compton_dataset_cache_angles_pi_2_ns800000_ts2500_seed42/dataset.npz
+Загружены индексы фолдов: /home/tycha-0101/Documents/NN/cross_validation/cv_results/cv_folds_k5_ns800000_ts2500_seed42.pkl
+
+=== Фолд 0 | train=639952 val=160048 ===
+/home/tycha-0101/Documents/NN/cross_validation/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:228: UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 804: forward compatibility was attempted on non supported HW (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+Старт обучения на cpu
+Epoch 1 | Train Loss: 0.0434 | Val Loss: 0.0184 | LR: 1.000000e-03
+Epoch 2 | Train Loss: 0.0235 | Val Loss: 0.0161 | LR: 1.000000e-03
+Epoch 3 | Train Loss: 0.0187 | Val Loss: 0.0128 | LR: 1.000000e-03
+Epoch 4 | Train Loss: 0.0171 | Val Loss: 0.0182 | LR: 1.000000e-03
+Epoch 5 | Train Loss: 0.0152 | Val Loss: 0.0155 | LR: 1.000000e-03
+Epoch 6 | Train Loss: 0.0140 | Val Loss: 0.0117 | LR: 1.000000e-03
+Epoch 7 | Train Loss: 0.0136 | Val Loss: 0.0120 | LR: 1.000000e-03
+Epoch 8 | Train Loss: 0.0127 | Val Loss: 0.0077 | LR: 1.000000e-03
+Epoch 9 | Train Loss: 0.0121 | Val Loss: 0.0100 | LR: 1.000000e-03
+Epoch 10 | Train Loss: 0.0119 | Val Loss: 0.0116 | LR: 1.000000e-03
+Epoch 11 | Train Loss: 0.0120 | Val Loss: 0.0122 | LR: 1.000000e-03
+Epoch 12 | Train Loss: 0.0118 | Val Loss: 0.0093 | LR: 1.000000e-03
+Epoch 13 | Train Loss: 0.0115 | Val Loss: 0.0081 | LR: 1.000000e-03
+Epoch 14 | Train Loss: 0.0113 | Val Loss: 0.0087 | LR: 1.000000e-03
+Epoch 15 | Train Loss: 0.0112 | Val Loss: 0.0078 | LR: 1.000000e-03
+Epoch 16 | Train Loss: 0.0115 | Val Loss: 0.0110 | LR: 1.000000e-03
+Epoch 17 | Train Loss: 0.0112 | Val Loss: 0.0130 | LR: 1.000000e-03
+Epoch 18 | Train Loss: 0.0112 | Val Loss: 0.0131 | LR: 1.000000e-03
+Epoch 19 | Train Loss: 0.0110 | Val Loss: 0.0085 | LR: 1.000000e-03
+Epoch 20 | Train Loss: 0.0110 | Val Loss: 0.0146 | LR: 1.000000e-03
+Epoch 21 | Train Loss: 0.0113 | Val Loss: 0.0161 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0113 | Val Loss: 0.0175 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0115 | Val Loss: 0.0114 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0115 | Val Loss: 0.0244 | LR: 5.000000e-04
+Epoch 25 | Train Loss: 0.0074 | Val Loss: 0.0048 | LR: 5.000000e-04
+Epoch 26 | Train Loss: 0.0075 | Val Loss: 0.0059 | LR: 5.000000e-04
+Epoch 27 | Train Loss: 0.0075 | Val Loss: 0.0072 | LR: 5.000000e-04
+Epoch 28 | Train Loss: 0.0075 | Val Loss: 0.0060 | LR: 5.000000e-04
+Epoch 29 | Train Loss: 0.0074 | Val Loss: 0.0148 | LR: 5.000000e-04
+Epoch 30 | Train Loss: 0.0075 | Val Loss: 0.0072 | LR: 5.000000e-04
+Фолд 0 готов | best_val_loss=0.0048 MSE_log=0.009629 area_err=4.63%
+
+=== Фолд 1 | train=639976 val=160024 ===
+Старт обучения на cpu
+Epoch 1 | Train Loss: 0.0436 | Val Loss: 0.0273 | LR: 1.000000e-03
+Epoch 2 | Train Loss: 0.0227 | Val Loss: 0.0220 | LR: 1.000000e-03
+Epoch 3 | Train Loss: 0.0187 | Val Loss: 0.0126 | LR: 1.000000e-03
+Epoch 4 | Train Loss: 0.0159 | Val Loss: 0.0107 | LR: 1.000000e-03
+Epoch 5 | Train Loss: 0.0149 | Val Loss: 0.0100 | LR: 1.000000e-03
+Epoch 6 | Train Loss: 0.0140 | Val Loss: 0.0082 | LR: 1.000000e-03
+Epoch 7 | Train Loss: 0.0129 | Val Loss: 0.0220 | LR: 1.000000e-03
+Epoch 8 | Train Loss: 0.0130 | Val Loss: 0.0132 | LR: 1.000000e-03
+Epoch 9 | Train Loss: 0.0122 | Val Loss: 0.0155 | LR: 1.000000e-03
+Epoch 10 | Train Loss: 0.0120 | Val Loss: 0.0097 | LR: 1.000000e-03
+Epoch 11 | Train Loss: 0.0118 | Val Loss: 0.0091 | LR: 1.000000e-03
+Epoch 12 | Train Loss: 0.0111 | Val Loss: 0.0108 | LR: 1.000000e-03
+Epoch 13 | Train Loss: 0.0112 | Val Loss: 0.0109 | LR: 1.000000e-03
+Epoch 14 | Train Loss: 0.0116 | Val Loss: 0.0090 | LR: 1.000000e-03
+Epoch 15 | Train Loss: 0.0115 | Val Loss: 0.0124 | LR: 1.000000e-03
+Epoch 16 | Train Loss: 0.0109 | Val Loss: 0.0064 | LR: 1.000000e-03
+Epoch 17 | Train Loss: 0.0112 | Val Loss: 0.0066 | LR: 1.000000e-03
+Epoch 18 | Train Loss: 0.0111 | Val Loss: 0.0073 | LR: 1.000000e-03
+Epoch 19 | Train Loss: 0.0107 | Val Loss: 0.0084 | LR: 1.000000e-03
+Epoch 20 | Train Loss: 0.0107 | Val Loss: 0.0131 | LR: 1.000000e-03
+Epoch 21 | Train Loss: 0.0107 | Val Loss: 0.0092 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0111 | Val Loss: 0.0085 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0111 | Val Loss: 0.0075 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0110 | Val Loss: 0.0100 | LR: 1.000000e-03
+Epoch 25 | Train Loss: 0.0111 | Val Loss: 0.0072 | LR: 1.000000e-03
+Epoch 26 | Train Loss: 0.0113 | Val Loss: 0.0088 | LR: 1.000000e-03
+Epoch 27 | Train Loss: 0.0111 | Val Loss: 0.0093 | LR: 1.000000e-03
+Epoch 28 | Train Loss: 0.0115 | Val Loss: 0.0152 | LR: 1.000000e-03
+Epoch 29 | Train Loss: 0.0116 | Val Loss: 0.0089 | LR: 1.000000e-03
+Epoch 30 | Train Loss: 0.0111 | Val Loss: 0.0063 | LR: 1.000000e-03
+Фолд 1 готов | best_val_loss=0.0063 MSE_log=0.016153 area_err=7.31%
+
+=== Фолд 2 | train=640003 val=159997 ===
+Старт обучения на cpu
+Epoch 1 | Train Loss: 0.0458 | Val Loss: 0.0282 | LR: 1.000000e-03
+Epoch 2 | Train Loss: 0.0247 | Val Loss: 0.0351 | LR: 1.000000e-03
+Epoch 3 | Train Loss: 0.0199 | Val Loss: 0.0156 | LR: 1.000000e-03
+Epoch 4 | Train Loss: 0.0176 | Val Loss: 0.0149 | LR: 1.000000e-03
+Epoch 5 | Train Loss: 0.0160 | Val Loss: 0.0186 | LR: 1.000000e-03
+Epoch 6 | Train Loss: 0.0148 | Val Loss: 0.0164 | LR: 1.000000e-03
+Epoch 7 | Train Loss: 0.0141 | Val Loss: 0.0278 | LR: 1.000000e-03
+Epoch 8 | Train Loss: 0.0134 | Val Loss: 0.0222 | LR: 1.000000e-03
+Epoch 9 | Train Loss: 0.0132 | Val Loss: 0.0165 | LR: 1.000000e-03
+Epoch 10 | Train Loss: 0.0128 | Val Loss: 0.0101 | LR: 1.000000e-03
+Epoch 11 | Train Loss: 0.0126 | Val Loss: 0.0185 | LR: 1.000000e-03
+Epoch 12 | Train Loss: 0.0124 | Val Loss: 0.0113 | LR: 1.000000e-03
+Epoch 13 | Train Loss: 0.0124 | Val Loss: 0.0140 | LR: 1.000000e-03
+Epoch 14 | Train Loss: 0.0118 | Val Loss: 0.0119 | LR: 1.000000e-03
+Epoch 15 | Train Loss: 0.0119 | Val Loss: 0.0097 | LR: 1.000000e-03
+Epoch 16 | Train Loss: 0.0116 | Val Loss: 0.0165 | LR: 1.000000e-03
+Epoch 17 | Train Loss: 0.0116 | Val Loss: 0.0072 | LR: 1.000000e-03
+Epoch 18 | Train Loss: 0.0114 | Val Loss: 0.0155 | LR: 1.000000e-03
+Epoch 19 | Train Loss: 0.0118 | Val Loss: 0.0093 | LR: 1.000000e-03
+Epoch 20 | Train Loss: 0.0114 | Val Loss: 0.0070 | LR: 1.000000e-03
+Epoch 21 | Train Loss: 0.0113 | Val Loss: 0.0319 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0112 | Val Loss: 0.0084 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0111 | Val Loss: 0.0107 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0114 | Val Loss: 0.0090 | LR: 1.000000e-03
+Загрузка датасета из кеша (один файл): /home/tycha-0101/Documents/NN/compton_dataset_cache_angles_pi_2_ns800000_ts2500_seed42/dataset.npz
+Загружены индексы фолдов: /home/tycha-0101/Documents/NN/cross_validation/cv_results/cv_folds_k5_ns800000_ts2500_seed42.pkl
+Фолд 0: пропуск (уже есть metrics + checkpoint).
+Фолд 1: пропуск (уже есть metrics + checkpoint).
+
+=== Фолд 2 | train=640003 val=159997 ===
+Фолд 2: частичное возобновление (checkpoint + normalizer).
+Продолжение обучения с эпохи 21 (best_val_loss=0.0070)
+Старт обучения на cuda
+Epoch 21 | Train Loss: 0.0111 | Val Loss: 0.0114 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0112 | Val Loss: 0.0120 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0114 | Val Loss: 0.0205 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0110 | Val Loss: 0.0098 | LR: 1.000000e-03
+Epoch 25 | Train Loss: 0.0113 | Val Loss: 0.0091 | LR: 1.000000e-03
+Epoch 26 | Train Loss: 0.0110 | Val Loss: 0.0155 | LR: 1.000000e-03
+Epoch 27 | Train Loss: 0.0114 | Val Loss: 0.0096 | LR: 1.000000e-03
+Epoch 28 | Train Loss: 0.0108 | Val Loss: 0.0110 | LR: 1.000000e-03
+Epoch 29 | Train Loss: 0.0110 | Val Loss: 0.0112 | LR: 1.000000e-03
+Epoch 30 | Train Loss: 0.0111 | Val Loss: 0.0138 | LR: 1.000000e-03
+Фолд 2 готов | best_val_loss=0.0070 MSE_log=0.014527 area_err=13.42%
+
+=== Фолд 3 | train=640024 val=159976 ===
+Старт обучения на cuda
+Epoch 1 | Train Loss: 0.0609 | Val Loss: 0.0308 | LR: 1.000000e-03
+Epoch 2 | Train Loss: 0.0247 | Val Loss: 0.0161 | LR: 1.000000e-03
+Epoch 3 | Train Loss: 0.0194 | Val Loss: 0.0197 | LR: 1.000000e-03
+Epoch 4 | Train Loss: 0.0165 | Val Loss: 0.0212 | LR: 1.000000e-03
+Epoch 5 | Train Loss: 0.0145 | Val Loss: 0.0117 | LR: 1.000000e-03
+Epoch 6 | Train Loss: 0.0133 | Val Loss: 0.0216 | LR: 1.000000e-03
+Epoch 7 | Train Loss: 0.0126 | Val Loss: 0.0107 | LR: 1.000000e-03
+Epoch 8 | Train Loss: 0.0121 | Val Loss: 0.0097 | LR: 1.000000e-03
+Epoch 9 | Train Loss: 0.0123 | Val Loss: 0.0135 | LR: 1.000000e-03
+Epoch 10 | Train Loss: 0.0117 | Val Loss: 0.0101 | LR: 1.000000e-03
+Epoch 11 | Train Loss: 0.0113 | Val Loss: 0.0100 | LR: 1.000000e-03
+Epoch 12 | Train Loss: 0.0113 | Val Loss: 0.0111 | LR: 1.000000e-03
+Epoch 13 | Train Loss: 0.0105 | Val Loss: 0.0144 | LR: 1.000000e-03
+Epoch 14 | Train Loss: 0.0108 | Val Loss: 0.0071 | LR: 1.000000e-03
+Epoch 15 | Train Loss: 0.0111 | Val Loss: 0.0110 | LR: 1.000000e-03
+Epoch 16 | Train Loss: 0.0108 | Val Loss: 0.0073 | LR: 1.000000e-03
+Epoch 17 | Train Loss: 0.0107 | Val Loss: 0.0065 | LR: 1.000000e-03
+Epoch 18 | Train Loss: 0.0106 | Val Loss: 0.0138 | LR: 1.000000e-03
+Epoch 19 | Train Loss: 0.0111 | Val Loss: 0.0082 | LR: 1.000000e-03
+Epoch 20 | Train Loss: 0.0108 | Val Loss: 0.0098 | LR: 1.000000e-03
+Epoch 21 | Train Loss: 0.0102 | Val Loss: 0.0074 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0109 | Val Loss: 0.0147 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0107 | Val Loss: 0.0090 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0106 | Val Loss: 0.0077 | LR: 1.000000e-03
+Epoch 25 | Train Loss: 0.0107 | Val Loss: 0.0054 | LR: 1.000000e-03
+Epoch 26 | Train Loss: 0.0107 | Val Loss: 0.0100 | LR: 1.000000e-03
+Epoch 27 | Train Loss: 0.0110 | Val Loss: 0.0115 | LR: 1.000000e-03
+Epoch 28 | Train Loss: 0.0109 | Val Loss: 0.0124 | LR: 1.000000e-03
+Epoch 29 | Train Loss: 0.0114 | Val Loss: 0.0125 | LR: 1.000000e-03
+Epoch 30 | Train Loss: 0.0107 | Val Loss: 0.0291 | LR: 1.000000e-03
+Фолд 3 готов | best_val_loss=0.0054 MSE_log=0.012271 area_err=8.72%
+
+=== Фолд 4 | train=640045 val=159955 ===
+Старт обучения на cuda
+Epoch 1 | Train Loss: 0.0458 | Val Loss: 0.0358 | LR: 1.000000e-03
+Epoch 2 | Train Loss: 0.0235 | Val Loss: 0.0176 | LR: 1.000000e-03
+Epoch 3 | Train Loss: 0.0196 | Val Loss: 0.0184 | LR: 1.000000e-03
+Epoch 4 | Train Loss: 0.0169 | Val Loss: 0.0130 | LR: 1.000000e-03
+Epoch 5 | Train Loss: 0.0156 | Val Loss: 0.0347 | LR: 1.000000e-03
+Epoch 6 | Train Loss: 0.0145 | Val Loss: 0.0170 | LR: 1.000000e-03
+Epoch 7 | Train Loss: 0.0138 | Val Loss: 0.0090 | LR: 1.000000e-03
+Epoch 8 | Train Loss: 0.0135 | Val Loss: 0.0171 | LR: 1.000000e-03
+Epoch 9 | Train Loss: 0.0129 | Val Loss: 0.0233 | LR: 1.000000e-03
+Epoch 10 | Train Loss: 0.0127 | Val Loss: 0.0071 | LR: 1.000000e-03
+Epoch 11 | Train Loss: 0.0121 | Val Loss: 0.0095 | LR: 1.000000e-03
+Epoch 12 | Train Loss: 0.0118 | Val Loss: 0.0185 | LR: 1.000000e-03
+Epoch 13 | Train Loss: 0.0121 | Val Loss: 0.0074 | LR: 1.000000e-03
+Epoch 14 | Train Loss: 0.0119 | Val Loss: 0.0063 | LR: 1.000000e-03
+Epoch 15 | Train Loss: 0.0115 | Val Loss: 0.0089 | LR: 1.000000e-03
+Epoch 16 | Train Loss: 0.0115 | Val Loss: 0.0150 | LR: 1.000000e-03
+Epoch 17 | Train Loss: 0.0119 | Val Loss: 0.0104 | LR: 1.000000e-03
+Epoch 18 | Train Loss: 0.0115 | Val Loss: 0.0078 | LR: 1.000000e-03
+Epoch 19 | Train Loss: 0.0116 | Val Loss: 0.0077 | LR: 1.000000e-03
+Epoch 20 | Train Loss: 0.0112 | Val Loss: 0.0063 | LR: 1.000000e-03
+Epoch 21 | Train Loss: 0.0108 | Val Loss: 0.0084 | LR: 1.000000e-03
+Epoch 22 | Train Loss: 0.0112 | Val Loss: 0.0096 | LR: 1.000000e-03
+Epoch 23 | Train Loss: 0.0116 | Val Loss: 0.0086 | LR: 1.000000e-03
+Epoch 24 | Train Loss: 0.0116 | Val Loss: 0.0064 | LR: 1.000000e-03
+Epoch 25 | Train Loss: 0.0117 | Val Loss: 0.0077 | LR: 1.000000e-03
+Epoch 26 | Train Loss: 0.0110 | Val Loss: 0.0094 | LR: 1.000000e-03
+Epoch 27 | Train Loss: 0.0118 | Val Loss: 0.0078 | LR: 1.000000e-03
+Epoch 28 | Train Loss: 0.0118 | Val Loss: 0.0077 | LR: 1.000000e-03
+Epoch 29 | Train Loss: 0.0115 | Val Loss: 0.0118 | LR: 1.000000e-03
+Epoch 30 | Train Loss: 0.0119 | Val Loss: 0.0125 | LR: 5.000000e-04
+Фолд 4 готов | best_val_loss=0.0063 MSE_log=0.014073 area_err=14.36%
+
+=== Сводка CV ===
+best_val_loss: 0.0060 ± 0.0008
+MSE (log):     0.013331 ± 0.002226
+MAE (log):     0.042857 ± 0.005746
+Area err %:    9.69 ± 3.69
+Сводка: /home/tycha-0101/Documents/NN/cross_validation/cv_results/cv_summary.json

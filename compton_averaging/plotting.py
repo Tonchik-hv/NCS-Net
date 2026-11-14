@@ -1,6 +1,7 @@
 """Утилиты оформления графиков спектров."""
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator
 
 from compton_averaging.config import (
@@ -10,6 +11,219 @@ from compton_averaging.config import (
     PLOT_TEXT_FS,
     PLOT_TICK_FS,
 )
+
+THETA_C = 0.0007
+ZOOM_X_MIN = 0.65
+ZOOM_X_MAX = 1.2
+INSET_SPECTRUM_X_MIN = 0.2
+INSET_SPECTRUM_X_MAX = 1.8
+INSET_SHIFT_VERTICAL_CM = -1.0  # см: положительное — вниз, отрицательное — вверх
+ZOOM_BOX_COLOR = "white"
+ZOOM_INSET_TICK_GRID_COLOR = "black"
+ZOOM_INSET_LINE_COLOR = "black"
+
+
+def _collimation_inset_axes(
+    ax,
+    width_frac: float = 0.38,
+    height_frac: float = 0.32,
+    pad_axes: float = 0.02,
+    shift_vertical_cm: float = INSET_SHIFT_VERTICAL_CM,
+):
+    """
+    Inset справа по центру (center right) в координатах ax (transAxes);
+    сдвиг по вертикали shift_vertical_cm (см): + вниз, − вверх.
+    """
+    fig = ax.figure
+    pos = ax.get_position()
+    ax_h_in = float(fig.get_figheight()) * pos.height
+    dy_axes = (shift_vertical_cm / 2.54) / ax_h_in
+    left = 1.0 - width_frac - pad_axes
+    bottom = 0.5 - height_frac / 2.0 - dy_axes
+    return ax.inset_axes(
+        [left, bottom, width_frac, height_frac], transform=ax.transAxes
+    )
+
+
+def collimation_zoom_window(
+    chi,
+    y_pos,
+    intensity,
+    theta_c,
+    gamma0,
+    x_min=ZOOM_X_MIN,
+    x_max=ZOOM_X_MAX,
+):
+    """Окно inset: по y от 0 до gamma0*theta_c; по x фиксированный отрезок [x_min, x_max]."""
+    y_hi = float(gamma0) * float(theta_c)
+    zoom_xmin = float(x_min)
+    zoom_xmax = float(x_max)
+    if zoom_xmax <= zoom_xmin:
+        zoom_xmax = zoom_xmin + 1e-3
+    return zoom_xmin, zoom_xmax, 0.0, y_hi
+
+
+def add_collimation_zoom_box(
+    ax,
+    chi,
+    y_pos,
+    intensity,
+    zmax,
+    gamma0,
+    theta_c=THETA_C,
+    tick_fs=PLOT_TICK_FS,
+    inset_ytick_decimals=4,
+    shift_down_cm: float = 2.0,
+):
+    """Пунктирный прямоугольник на ax и inset с увеличением коллимационной области."""
+    zoom_xmin, zoom_xmax, zoom_ymin, zoom_ymax = collimation_zoom_window(
+        chi, y_pos, intensity, theta_c, gamma0
+    )
+    axins = _collimation_inset_axes(ax, shift_vertical_cm=shift_down_cm)
+    axins.pcolormesh(
+        chi,
+        y_pos,
+        intensity,
+        shading="gouraud",
+        cmap="viridis",
+        vmin=0.0,
+        vmax=zmax,
+    )
+    axins.set_xlim(zoom_xmin, zoom_xmax)
+    axins.set_ylim(zoom_ymin, zoom_ymax)
+    axins.set_facecolor(plt.cm.viridis(0))
+    axins.tick_params(
+        axis="both",
+        which="both",
+        labelsize=tick_fs * 0.75,
+        colors=ZOOM_INSET_TICK_GRID_COLOR,
+        labelcolor=ZOOM_BOX_COLOR,
+    )
+    for spine in axins.spines.values():
+        spine.set_edgecolor(ZOOM_BOX_COLOR)
+    y_ticks = np.linspace(zoom_ymin, zoom_ymax, 3)
+    axins.set_yticks(y_ticks)
+    axins.set_yticklabels(
+        [f"{t / gamma0:.{inset_ytick_decimals}f}" for t in y_ticks],
+        fontsize=tick_fs * 0.75,
+        color=ZOOM_BOX_COLOR,
+    )
+    axins.grid(True, alpha=0.35, color=ZOOM_INSET_TICK_GRID_COLOR)
+
+    ax.add_patch(
+        Rectangle(
+            (zoom_xmin, zoom_ymin),
+            zoom_xmax - zoom_xmin,
+            zoom_ymax - zoom_ymin,
+            fill=False,
+            edgecolor=ZOOM_BOX_COLOR,
+            linestyle="--",
+            linewidth=1.2,
+            zorder=12,
+        )
+    )
+    return zoom_xmin, zoom_xmax, zoom_ymin, zoom_ymax
+
+
+def integrate_map_over_collimation_strip(
+    chi: np.ndarray,
+    y_pos: np.ndarray,
+    intensity: np.ndarray,
+    theta_c: float,
+    gamma0: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    По каждой «столбцовой» точке сетки: интеграл интенсивности по вертикали в полосе
+    y = γ(π − θ_lab) ∈ [0, γ·θ_c] (численно трапецией по отсортированным y).
+    Ось x — среднее χ в этой полосе по столбцу (для совпадения с осью карты).
+    """
+    y_hi = float(gamma0) * float(theta_c)
+    chi_arr = np.asarray(chi, dtype=np.float64)
+    y_arr = np.asarray(y_pos, dtype=np.float64)
+    iz = np.asarray(intensity, dtype=np.float64)
+    _trapz = np.trapezoid if hasattr(np, "trapezoid") else np.trapz
+
+    _, n_cols = iz.shape
+    x_spec = np.full(n_cols, np.nan, dtype=np.float64)
+    spec = np.zeros(n_cols, dtype=np.float64)
+    for j in range(n_cols):
+        m = y_arr[:, j] <= y_hi
+        if not np.any(m):
+            continue
+        ys = y_arr[m, j]
+        iv = iz[m, j]
+        order = np.argsort(ys)
+        ys_s = ys[order]
+        iv_s = iv[order]
+        if ys_s.size >= 2:
+            spec[j] = float(_trapz(iv_s, ys_s))
+        elif ys_s.size == 1:
+            spec[j] = float(iv_s[0])
+        x_spec[j] = float(np.mean(chi_arr[m, j]))
+    return x_spec, spec
+
+
+def add_collimation_angle_integrated_spectrum_inset(
+    ax,
+    chi: np.ndarray,
+    y_pos: np.ndarray,
+    intensity: np.ndarray,
+    gamma0: float,
+    theta_c: float = THETA_C,
+    tick_fs: float = PLOT_TICK_FS,
+    shift_vertical_cm: float = INSET_SHIFT_VERTICAL_CM,
+    x_min: float = INSET_SPECTRUM_X_MIN,
+    x_max: float = INSET_SPECTRUM_X_MAX,
+):
+    """
+    Inset без пунктира на основной оси: линейный график спектра, интегрированного
+    по «углу» (ось y карты) в полосе γ(π−θ_lab) ∈ [0, γ·θ_c]; по горизонтали — χ (ось x карты),
+    в пределах [x_min, x_max].
+    """
+    zoom_xmin, zoom_xmax = float(x_min), float(x_max)
+    x_spec, spec = integrate_map_over_collimation_strip(chi, y_pos, intensity, theta_c, gamma0)
+    valid = (
+        np.isfinite(x_spec)
+        & np.isfinite(spec)
+        & (x_spec >= zoom_xmin - 1e-12)
+        & (x_spec <= zoom_xmax + 1e-12)
+    )
+    x_plot = x_spec[valid]
+    y_plot = spec[valid]
+    order = np.argsort(x_plot)
+    x_plot = x_plot[order]
+    y_plot = y_plot[order]
+
+    axins = _collimation_inset_axes(ax, shift_vertical_cm=shift_vertical_cm)
+    axins.plot(x_plot, y_plot, color=ZOOM_INSET_LINE_COLOR, linewidth=1.2)
+    axins.set_xlim(zoom_xmin, zoom_xmax)
+    ymax = float(np.nanmax(y_plot)) if y_plot.size else 1.0
+    axins.set_ylim(0.0, ymax * 1.05 if ymax > 0 else 1.0)
+    label_fs = tick_fs * 0.72
+    title_fs = tick_fs * 0.68
+    axins.set_xlabel(r"$y_{\mathrm{lab}}$", fontsize=label_fs, color=ZOOM_BOX_COLOR)
+    axins.set_ylabel(
+        r"$\frac{\mathrm{d}^2 N}{\mathrm{d}\omega_{\mathrm{lab}}}$",
+        fontsize=label_fs,
+        color=ZOOM_BOX_COLOR,
+    )
+    axins.set_title(
+        r"integrated in cone $\theta < \theta_c$",
+        fontsize=title_fs,
+        color=ZOOM_BOX_COLOR,
+        pad=5,
+    )
+    axins.tick_params(
+        axis="both",
+        which="both",
+        labelsize=tick_fs * 0.75,
+        colors=ZOOM_INSET_TICK_GRID_COLOR,
+        labelcolor=ZOOM_BOX_COLOR,
+    )
+    for spine in axins.spines.values():
+        spine.set_edgecolor(ZOOM_BOX_COLOR)
+    axins.grid(True, alpha=0.35, color=ZOOM_INSET_TICK_GRID_COLOR)
+    return zoom_xmin, zoom_xmax, x_plot, y_plot
 
 
 def spectrum_xlim_skip_leading_zeros(

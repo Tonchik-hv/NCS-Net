@@ -1,4 +1,6 @@
 """Нормализация параметров и спектров."""
+import pickle
+
 import torch
 
 
@@ -39,3 +41,19 @@ class DataNormalizer:
     def unnorm_params(self, p_norm): return p_norm * self.p_std + self.p_mean
     def norm_spec(self, y): return (y - self.y_mean) / self.y_std
     def unnorm_spec(self, y_norm): return y_norm * self.y_std + self.y_mean
+
+
+def load_normalizer_from_pickle(path: str) -> DataNormalizer:
+    """Загрузка .pkl; старые файлы могут ссылаться на __main__.DataNormalizer."""
+
+    class _Unpickler(pickle.Unpickler):
+        def find_class(self, module, name):
+            if name == "DataNormalizer" and module == "__main__":
+                return DataNormalizer
+            return super().find_class(module, name)
+
+    with open(path, "rb") as f:
+        normalizer = _Unpickler(f).load()
+    if not isinstance(normalizer, DataNormalizer):
+        raise TypeError(f"Ожидался DataNormalizer в {path}, получен {type(normalizer)!r}")
+    return normalizer

@@ -4,14 +4,20 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import sys
 import os
-import pickle
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 from compton_averaging.config import model_file, normalizer_file
 from compton_averaging.model import DirectComptonModel
-from compton_averaging.normalizer import DataNormalizer
+from compton_averaging.normalizer import load_normalizer_from_pickle
+from compton_averaging.plotting import (
+    INSET_SHIFT_VERTICAL_CM,
+    INSET_SPECTRUM_X_MAX,
+    INSET_SPECTRUM_X_MIN,
+    ZOOM_BOX_COLOR,
+    add_collimation_angle_integrated_spectrum_inset,
+)
 from snlcs.external_fields import ExternalField
 from snlcs.ebeam import eGaussBeam
 from src.calc_spectrum import D2ECalculator_angles
@@ -20,8 +26,10 @@ from snlcs.methods.motion import MotionIntegrationMethod
 from snlcs.methods.spectrum import SpectrumMethod
 import time
 
-plt.style.use('physrev.mplstyle') # Set full path to if physrev.mplstyle is not in the same in directory as the notebook
-plt.rcParams['figure.dpi'] = "300"
+plt.style.use(os.path.join(BASE_DIR, "physrev.mplstyle"))
+plt.rcParams["figure.dpi"] = "300"
+
+BEAM_THETA_C = 0.0025
 
 PLOT_TICK_FS = 16
 PLOT_LABEL_FS = 20
@@ -126,8 +134,7 @@ def main():
 
     # 2. Load NN model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    with open(normalizer_file(BASE_DIR), "rb") as f:
-        normalizer = pickle.load(f)
+    normalizer = load_normalizer_from_pickle(normalizer_file(BASE_DIR))
     normalizer.to(device)
 
     model = DirectComptonModel(params_dim=3).to(device)
@@ -240,13 +247,14 @@ def main():
         CHI_LAB, y_pos_lab, D2N_LAB_TOTAL*0.599, shading="gouraud", cmap="viridis", vmin=0.0, vmax=zmax_nn
     )
 
-    plt.xlabel(r"$y_{\text{lab}}$", fontsize=vis_label_fs)
-    plt.ylabel(r"$\gamma_{\text{mean}}(\pi - \theta_{\text{lab}})$", fontsize=vis_label_fs)
+    intensity_nn_plot = D2N_LAB_TOTAL * 0.599
+    plt.xlabel(r"$y_{\mathrm{lab}}$", fontsize=vis_label_fs)
+    plt.ylabel(r"$\gamma_{\mathrm{mean}}(\pi - \theta_{\mathrm{lab}})$", fontsize=vis_label_fs)
 
     cbar = plt.colorbar(mesh, extend="neither")
     style_colorbar(
         cbar,
-        r"Predicted $\frac{d^2N}{d\omega_{\text{lab}} d\Omega_{\text{lab}}}$ Envelope",
+        r"Predicted $\frac{d^2N}{d\omega_{\mathrm{lab}} d\Omega_{\mathrm{lab}}}$ Envelope",
         zmax_nn,
         tick_fs=vis_tick_fs,
         label_fs=vis_cbar_label_fs,
@@ -264,6 +272,38 @@ def main():
     )
 
     add_beam_params_text(ax2d, a0_lab, dur_lab, text_fs=vis_text_fs)
+
+    y_collimation = gamma0_mean * BEAM_THETA_C
+    ax2d.axhline(
+        y_collimation, color=ZOOM_BOX_COLOR, linestyle="--", linewidth=1, alpha=0.95, zorder=10
+    )
+    ax2d.annotate(
+        rf"$\theta_c={BEAM_THETA_C}$",
+        xy=(0.6, y_collimation),
+        xytext=(-8, 6),
+        textcoords="offset points",
+        fontsize=vis_tick_fs,
+        color=ZOOM_BOX_COLOR,
+        ha="right",
+        va="bottom",
+        zorder=11,
+    )
+    zx0, zx1, _, _ = add_collimation_angle_integrated_spectrum_inset(
+        ax2d,
+        CHI_LAB,
+        y_pos_lab,
+        intensity_nn_plot,
+        gamma0_mean,
+        BEAM_THETA_C,
+        vis_tick_fs,
+        shift_vertical_cm=INSET_SHIFT_VERTICAL_CM,
+        x_min=INSET_SPECTRUM_X_MIN,
+        x_max=INSET_SPECTRUM_X_MAX,
+    )
+    print(
+        f"Inset integrated spectrum (predicted beam): x=[{zx0:.4f}, {zx1:.4f}] "
+        f"(theta_c={BEAM_THETA_C})"
+    )
 
     plt.subplots_adjust(right=0.82, bottom=0.12)
     out_file = "predicted_beam_spectrum_map.png"
@@ -366,13 +406,13 @@ def main():
     mesh = plt.pcolormesh(
         CHI_LAB, y_pos, d2N_analytic_avg/2, shading="gouraud", cmap="viridis", vmin=0.0, vmax=zmax_an
     )
-    plt.xlabel(r"$y_{\text{lab}}$", fontsize=vis_label_fs)
-    plt.ylabel(r"$\gamma_{\text{mean}}(\pi - \theta_{\text{lab}})$", fontsize=vis_label_fs)
+    plt.xlabel(r"$y_{\mathrm{lab}}$", fontsize=vis_label_fs)
+    plt.ylabel(r"$\gamma_{\mathrm{mean}}(\pi - \theta_{\mathrm{lab}})$", fontsize=vis_label_fs)
 
     cbar = plt.colorbar(mesh, extend="neither")
     style_colorbar(
         cbar,
-        r"Analytical $\frac{d^2N}{d\omega_{\text{lab}} d\Omega_{\text{lab}}}$ Envelope",
+        r"Analytical $\frac{d^2N}{d\omega_{\mathrm{lab}} d\Omega_{\mathrm{lab}}}$ Envelope",
         zmax_an,
         tick_fs=vis_tick_fs,
         label_fs=vis_cbar_label_fs,
@@ -392,6 +432,7 @@ def main():
     print(f"Saved to {out_file_analytic}")
 
     # 5. Third 2D picture (from test.ipynb) without Lorentz transform, coherent=False
+    THETA_C_LAB_MAP = 0.0007
     print("Computing third picture on CPU...")
     z0 = ebeam_params.z0
     n_lambda = 2 * abs(z0) / np.pi
@@ -441,8 +482,8 @@ def main():
     mesh = plt.pcolormesh(
         grid_chi, y_pos, d2N, shading="gouraud", cmap="viridis", vmin=0.0, vmax=zmax_quad
     )
-    plt.xlabel(r"$y_{\text{lab}}$", fontsize=vis_label_fs)
-    plt.ylabel(r"$\gamma_{\text{mean}}(\pi - \theta_{\text{lab}})$", fontsize=vis_label_fs)
+    plt.xlabel(r"$y_{\mathrm{lab}}$", fontsize=vis_label_fs)
+    plt.ylabel(r"$\gamma_{\mathrm{mean}}(\pi - \theta_{\mathrm{lab}})$", fontsize=vis_label_fs)
     cbar = plt.colorbar(mesh, extend="neither")
     style_colorbar(
         cbar,
@@ -454,10 +495,42 @@ def main():
 
     ax = plt.gca()
     style_map_axes(
-        ax, gamma, (freq_i, freq_f), y_max=np.nanmax(y_pos), ytick_decimals=2, tick_fs=vis_tick_fs
+        ax, gamma, (freq_i, freq_f), y_max=np.nanmax(y_pos), ytick_decimals=3, tick_fs=vis_tick_fs
     )
 
     add_beam_params_text(ax, a0_lab, dur_lab, text_fs=vis_text_fs)
+
+    y_collimation = gamma * THETA_C_LAB_MAP
+    ax.axhline(
+        y_collimation, color=ZOOM_BOX_COLOR, linestyle="--", linewidth=1, alpha=0.95, zorder=10
+    )
+    ax.annotate(
+        rf"$\theta_c={THETA_C_LAB_MAP}$",
+        xy=(0.6, y_collimation),
+        xytext=(-8, 6),
+        textcoords="offset points",
+        fontsize=vis_tick_fs,
+        color=ZOOM_BOX_COLOR,
+        ha="right",
+        va="bottom",
+        zorder=11,
+    )
+    zx0, zx1, _, _ = add_collimation_angle_integrated_spectrum_inset(
+        ax,
+        grid_chi,
+        y_pos,
+        d2N,
+        gamma,
+        THETA_C_LAB_MAP,
+        vis_tick_fs,
+        shift_vertical_cm=INSET_SHIFT_VERTICAL_CM,
+        x_min=INSET_SPECTRUM_X_MIN,
+        x_max=INSET_SPECTRUM_X_MAX,
+    )
+    print(
+        f"Inset integrated spectrum (quad beam lab): x=[{zx0:.4f}, {zx1:.4f}] "
+        f"(theta_c={THETA_C_LAB_MAP})"
+    )
 
     plt.subplots_adjust(right=0.82, bottom=0.12)
     out_file_third = "analytical_beam_spectrum_theta_frequency_map_lab.png"

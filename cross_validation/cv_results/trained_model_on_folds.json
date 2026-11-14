@@ -1,0 +1,187 @@
+{
+  "meta": {
+    "model_path": "/home/tycha-0101/Documents/NN/model_with_averaging_angles_pi_2_ns800000_ts2500.pth",
+    "normalizer_path": "/home/tycha-0101/Documents/NN/normalizer_angles_pi_2_ns800000_ts2500.pkl",
+    "folds_pkl": "/home/tycha-0101/Documents/NN/cross_validation/cv_results/cv_folds_k5_ns800000_ts2500_seed42.pkl",
+    "holdout_val_size": 160048,
+    "max_samples": 8192,
+    "generated_at": "2026-11-06T19:48:00.386423+00:00"
+  },
+  "per_fold": [
+    {
+      "fold": 0,
+      "n_fold_val": 160048,
+      "n_fold_val_evaluated": 8192,
+      "n_holdout_in_fold_val": 32253,
+      "n_holdout_evaluated": 8192,
+      "fraction_holdout_in_fold_val": 0.20152079376187143,
+      "max_samples_cap": 8192,
+      "full_fold_val": {
+        "mse_log_mean": 0.003859800286591053,
+        "mse_log_std": 0.04951176419854164,
+        "mae_log_mean": 0.0179668627679348,
+        "mae_log_std": 0.039347078651189804,
+        "area_rel_error_pct_mean": 2.1702561378479004,
+        "area_rel_error_pct_std": 3.8200252056121826,
+        "n_val_samples": 8192
+      },
+      "holdout_only": {
+        "mse_log_mean": 0.00538924103602767,
+        "mse_log_std": 0.0736856609582901,
+        "mae_log_mean": 0.01865575462579727,
+        "mae_log_std": 0.051052533090114594,
+        "area_rel_error_pct_mean": 2.1820154190063477,
+        "area_rel_error_pct_std": 3.8889594078063965,
+        "n_val_samples": 8192
+      }
+    },
+    {
+      "fold": 1,
+      "n_fold_val": 160024,
+      "n_fold_val_evaluated": 8192,
+      "n_holdout_in_fold_val": 31969,
+      "n_holdout_evaluated": 8192,
+      "fraction_holdout_in_fold_val": 0.19977628355746638,
+      "max_samples_cap": 8192,
+      "full_fold_val": {
+        "mse_log_mean": 0.004351490177214146,
+        "mse_log_std": 0.0824960246682167,
+        "mae_log_mean": 0.017666060477495193,
+        "mae_log_std": 0.046661410480737686,
+        "area_rel_error_pct_mean": 2.2732248306274414,
+        "area_rel_error_pct_std": 4.265302658081055,
+        "n_val_samples": 8192
+      },
+      "holdout_only": {
+        "mse_log_mean": 0.004021734930574894,
+        "mse_log_std": 0.047604575753211975,
+        "mae_log_mean": 0.01808398962020874,
+        "mae_log_std": 0.04244410991668701,
+        "area_rel_error_pct_mean": 2.2036309242248535,
+        "area_rel_error_pct_std": 4.213977813720703,
+        "n_val_samples": 8192
+      }
+    },
+    {
+      "fold": 2,
+      "n_fold_val": 159997,
+      "n_fold_val_evaluated": 8192,
+      "n_holdout_in_fold_val": 31923,
+      "n_holdout_evaluated": 8192,
+      "fraction_holdout_in_fold_val": 0.19952249104670713,
+      "max_samples_cap": 8192,
+      "full_fold_val": {
+        "mse_log_mean": 0.004906210117042065,
+        "mse_log_std": 0.07287360727787018,
+        "mae_log_mean": 0.018628861755132675,
+        "mae_log_std": 0.05051003396511078,
+        "area_rel_error_pct_mean": 2.2564773559570312,
+        "area_rel_error_pct_std": 4.185708045959473,
+        "n_val_samples": 8192
+      },
+      "holdout_only": {
+        "mse_log_mean": 0.004717897158116102,
+        "mse_log_std": 0.07255588471889496,
+        "mae_log_mean": 0.018186073750257492,
+        "mae_log_std": 0.04949212446808815,
+        "area_rel_error_pct_mean": 2.1839325428009033,
+        "area_rel_error_pct_std": 4.026037216186523,
+        "n_val_samples": 8192
+      }
+    },
+    {
+      "fold": 3,
+      "n_fold_val": 159976,
+      "n_fold_val_evaluated": 8192,
+      "n_holdout_in_fold_val": 31988,
+      "n_holdout_evaluated": 8192,
+      "fraction_holdout_in_fold_val": 0.19995499324898736,
+      "max_samples_cap": 8192,
+      "full_fold_val": {
+        "mse_log_mean": 0.0041085584089159966,
+        "mse_log_std": 0.06581462174654007,
+        "mae_log_mean": 0.017712542787194252,
+        "mae_log_std": 0.04483199864625931,
+        "area_rel_error_pct_mean": 2.1702592372894287,
+        "area_rel_error_pct_std": 4.027585029602051,
+        "n_val_samples": 8192
+      },
+      "holdout_only": {
+        "mse_log_mean": 0.00283445930108428,
+        "mse_log_std": 0.03102438896894455,
+        "mae_log_mean": 0.017222214490175247,
+        "mae_log_std": 0.031032152473926544,
+        "area_rel_error_pct_mean": 2.208268880844116,
+        "area_rel_error_pct_std": 3.9201128482818604,
+        "n_val_samples": 8192
+      }
+    },
+    {
+      "fold": 4,
+      "n_fold_val": 159955,
+      "n_fold_val_evaluated": 8192,
+      "n_holdout_in_fold_val": 31915,
+      "n_holdout_evaluated": 8192,
+      "fraction_holdout_in_fold_val": 0.19952486636866618,
+      "max_samples_cap": 8192,
+      "full_fold_val": {
+        "mse_log_mean": 0.0031876754947006702,
+        "mse_log_std": 0.02861804887652397,
+        "mae_log_mean": 0.01722325198352337,
+        "mae_log_std": 0.03416575491428375,
+        "area_rel_error_pct_mean": 2.1486058235168457,
+        "area_rel_error_pct_std": 3.8969879150390625,
+        "n_val_samples": 8192
+      },
+      "holdout_only": {
+        "mse_log_mean": 0.003883801633492112,
+        "mse_log_std": 0.06167178228497505,
+        "mae_log_mean": 0.017676323652267456,
+        "mae_log_std": 0.04279165342450142,
+        "area_rel_error_pct_mean": 2.2187154293060303,
+        "area_rel_error_pct_std": 4.0655927658081055,
+        "n_val_samples": 8192
+      }
+    }
+  ],
+  "aggregate_full_fold_val": {
+    "mse_log": {
+      "mean": 0.004082746896892786,
+      "std": 0.0005660104002360066,
+      "min": 0.0031876754947006702,
+      "max": 0.004906210117042065
+    },
+    "mae_log": {
+      "mean": 0.017839515954256056,
+      "std": 0.0004615786549464654,
+      "min": 0.01722325198352337,
+      "max": 0.018628861755132675
+    },
+    "area_rel_pct": {
+      "mean": 2.2037646770477295,
+      "std": 0.05077652069344139,
+      "min": 2.1486058235168457,
+      "max": 2.2732248306274414
+    }
+  },
+  "aggregate_holdout_only": {
+    "mse_log": {
+      "mean": 0.004169426811859012,
+      "std": 0.0008572396807598219,
+      "min": 0.00283445930108428,
+      "max": 0.00538924103602767
+    },
+    "mae_log": {
+      "mean": 0.017964871227741243,
+      "std": 0.00048481715115391834,
+      "min": 0.017222214490175247,
+      "max": 0.01865575462579727
+    },
+    "area_rel_pct": {
+      "mean": 2.1993126392364504,
+      "std": 0.014220206085113837,
+      "min": 2.1820154190063477,
+      "max": 2.2187154293060303
+    }
+  }
+}
